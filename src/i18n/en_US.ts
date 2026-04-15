@@ -11,6 +11,6 @@ export const en_US = {
     Popover: {
         suggestions: "Suggestions",
         aria: "Search term suggestions",
-        all: "View all",
+        all: "All Results",
     },
 };

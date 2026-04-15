@@ -63,6 +63,7 @@ export interface MagentoHeaders {
     apiKey: string;
     contentType: string;
     xRequestId: string;
+    customerGroup: string;
 }
 
 export interface ProductSearchQuery {
@@ -131,6 +132,7 @@ export interface ProductSearchResponse {
     errors: Array<RequestError>;
 }
 
+
 export interface Product {
     product: {
         __typename: string;
@@ -161,7 +163,18 @@ export interface Product {
         custom_attributes: null | CustomAttribute;
         add_to_cart_allowed: null | boolean;
     };
+    productView: {
+        __typename: string;
+        sku: string;
+        name: string;
+        attributes: Array<Attribute>;
+    };
     highlights: Array<Highlights>;
+}
+
+export interface Attribute {
+    name: string;
+    value: string;
 }
 
 export interface ComplexTextValue {

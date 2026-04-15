@@ -29,6 +29,7 @@ export interface StoreDetailsProps {
     config: StoreDetailsConfig;
     context?: QueryContextInput;
     apiUrl?: string;
+    apiKey?: string;
     route?: RedirectRouteFunc;
     searchRoute?: {
         route: string;
@@ -58,6 +59,7 @@ const getHeaders = (headers: MagentoHeaders) => {
         "X-Api-Key": headers.apiKey,
         "Content-Type": headers.contentType,
         "X-Request-Id": headers.xRequestId,
+        "Magento-Customer-Group": headers.customerGroup,
     };
 };
 
@@ -81,6 +83,7 @@ class LiveSearch {
         config,
         context,
         apiUrl,
+        apiKey,
     }: StoreDetailsProps) {
         this.minQueryLength = config?.minQueryLength ?? 3;
         this.pageSize = Number(config?.pageSize) ? Number(config?.pageSize) : 6;
@@ -101,7 +104,7 @@ class LiveSearch {
             websiteCode: websiteCode,
             storeCode: storeCode,
             storeViewCode: storeViewCode,
-            apiKey: "search_gql",
+            apiKey: apiKey ?? "search_gql",
             contentType: "application/json",
             apiUrl: this.apiUrl,
         };
@@ -146,9 +149,10 @@ class LiveSearch {
             websiteCode: this.search.websiteCode,
             storeCode: this.search.storeCode,
             storeViewCode: this.search.storeViewCode,
-            apiKey: "search_gql",
+            apiKey: this.search.apiKey,
             contentType: "application/json",
             xRequestId: searchRequestId,
+            customerGroup: this.context?.customerGroup ?? "",
         });
 
         const variables = {

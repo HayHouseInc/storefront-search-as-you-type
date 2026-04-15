@@ -116,3 +116,12 @@ _The purpose of this project is to provide a dev-ready starting point for develo
 
 ## Compatibility with Live Search PHP extension
  - version 1.1.0 is compatible with Live Search PHP extension v4.1.0+
+
+## Modifications In This Fork
+
+This fork modifies the vendor repo to: 
+
+- Remove the product image and price
+- Add the value of the product's "format" attribute, if present
+- Change the "View All" link to "All Results ([total results])"
+- Allow for switching the API endpoint between production and sandbox based on environmentType

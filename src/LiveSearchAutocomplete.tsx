@@ -11,12 +11,14 @@ interface LiveSearchProps {
 
 interface StoreDetailsProps {
     environmentId: string;
+    environmentType?: string;
     websiteCode: string;
     storeCode: string;
     storeViewCode: string;
     config: StoreDetailsConfig;
     context: QueryContextInput;
     apiUrl?: string;
+    apiKey?: string;
     // Configurable callback to handle routing to product page
     route?: RedirectRouteFunc;
     searchRoute?: {
@@ -86,6 +88,12 @@ class LiveSearchAutocomplete {
         this.locale = storeDetails.config?.locale ?? "en_US";
         this.context = storeDetails.context;
 
+        const isTestingEnvironment = this.storeDetails.environmentType?.toLowerCase() === 'testing';
+        const apiUrl = isTestingEnvironment ? TEST_URL : API_URL;
+        const apiKey = isTestingEnvironment && !this.storeDetails.apiKey
+            ? SANDBOX_KEY
+            : this.storeDetails.apiKey;
+
         this.search = new LiveSearch({
             environmentId: this.storeDetails.environmentId,
             websiteCode: this.storeDetails.websiteCode,
@@ -100,7 +108,8 @@ class LiveSearchAutocomplete {
                 displayOutOfStock: this.displayOutOfStock,
             },
             context: this.context,
-            apiUrl: API_URL,
+            apiUrl: this.storeDetails.apiUrl ?? apiUrl,
+            apiKey: apiKey,
             route: this.storeDetails.route,
         });
 

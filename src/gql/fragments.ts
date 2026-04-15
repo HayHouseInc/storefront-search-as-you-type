@@ -71,4 +71,18 @@ const Product = `
     }
 `;
 
-export { Product };
+const ProductView = `
+    fragment ProductView on ProductSearchItem {
+        productView {
+            __typename
+            sku
+            name
+            attributes {
+                name
+                value
+            }
+        }
+    }
+`;
+
+export { Product, ProductView };

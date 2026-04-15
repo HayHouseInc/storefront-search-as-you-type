@@ -24,6 +24,10 @@ const devConfig = merge(commonConfig, {
             API_URL: JSON.stringify(
                 "https://catalog-service.adobe.io/graphql",
             ),
+            TEST_URL: JSON.stringify(
+                "https://catalog-service-sandbox.adobe.io/graphql",
+            ),
+            SANDBOX_KEY: JSON.stringify("storefront-widgets"),
         }),
         new ForkTsCheckerWebpackPlugin(),
     ],

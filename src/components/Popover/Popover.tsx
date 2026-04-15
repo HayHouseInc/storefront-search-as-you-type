@@ -62,15 +62,15 @@ const Popover: FC<PopoverProps> = ({
     const translation = useTranslation(locale);
 
     const containerStyling = `
-            display: flex;
-            right: 0px;
-            margin-top: 5px;
-            box-shadow: 0px 0px 6px 0px #cacaca;
+            display: block;
+            left: 0px;
         `;
 
     // containerStyling is only for desktop display
-    if (resultsRef.current && (active || !isMobile)) {
+    if (resultsRef.current && products.length > 0 && active && minQueryLengthHit) {
         resultsRef.current.style.cssText = containerStyling;
+    } else if (resultsRef.current) {
+        resultsRef.current.style.cssText = '';
     }
 
     const updateAndSubmit = (phrase?: string) => {
@@ -139,97 +139,100 @@ const Popover: FC<PopoverProps> = ({
     }
 
     return (
-        <Grid
-            className={stylingIds.popover}
-            width={calculateWidth()}
-            height={calculatePopoverHeight()}
-            backgroundColor="#fff"
-            gridTemplateAreas={
-                isMobile
-                    ? '"suggestions""previews""viewall"'
-                    : '"suggestions previews" "viewall viewall"'
-            }
-            rowGap="16px"
-            columnGap={suggestions.length > 0 ? "16px" : "0px"}
-            gridTemplateColumns={isMobile ? "1fr" : "auto 3fr"}
-            gridTemplateRows={isMobile ? "auto 1fr 36px" : "1fr 36px"}
-            overflowY={isMobile ? "scroll" : "auto"}
-            overflowX="hidden"
-        >
-            {/* the suggestions element is currently not used */}
-            {suggestions.length > 0 && (
+        <>
+            <h4>Results:</h4>
+            <Grid
+                className={stylingIds.popover}
+                width={calculateWidth()}
+                height={calculatePopoverHeight()}
+                backgroundColor="#fff"
+                gridTemplateAreas={
+                    isMobile
+                        ? '"suggestions""previews""viewall"'
+                        : '"suggestions previews" "viewall viewall"'
+                }
+                rowGap="16px"
+                columnGap={suggestions.length > 0 ? "16px" : "0px"}
+                gridTemplateColumns={isMobile ? "1fr" : "auto 3fr"}
+                gridTemplateRows={isMobile ? "auto 1fr 36px" : "1fr 36px"}
+                overflowY={isMobile ? "scroll" : "auto"}
+                overflowX="hidden"
+            >
+                {/* the suggestions element is currently not used */}
+                {suggestions.length > 0 && (
+                    <Grid
+                        className={stylingIds.suggestions}
+                        gridArea="suggestions"
+                        width={isMobile ? "auto" : "max-content"}
+                        maxWidth={isMobile ? "none" : "150px"}
+                        gridTemplateRows={
+                            isMobile
+                                ? `repeat(${suggestions.length + 1}, 3.5rem)` // +1 to account for "suggestions" row
+                                : `repeat(${pageSize}, 1fr) minmax(0px, 20px);`
+                        }
+                        padding={
+                            isMobile ? "16px 32px 0px 32px" : "16px 0px 8px 16px"
+                        }
+                        margin={isMobile ? "auto 0px" : "unset"}
+                        textAlign={isMobile ? "center" : "unset"}
+                    >
+                        <StyledText
+                            customFontWeight={600}
+                            className={stylingIds.suggestionsHeader}
+                        >
+                            {translation.Popover.suggestions}
+                        </StyledText>
+                        {Suggestions}
+                    </Grid>
+                )}
+    
                 <Grid
-                    className={stylingIds.suggestions}
-                    gridArea="suggestions"
-                    width={isMobile ? "auto" : "max-content"}
-                    maxWidth={isMobile ? "none" : "150px"}
+                    className={stylingIds.products}
+                    gridArea="previews"
+                    gridTemplateColumns={"1fr 1fr"}
                     gridTemplateRows={
                         isMobile
-                            ? `repeat(${suggestions.length + 1}, 3.5rem)` // +1 to account for "suggestions" row
-                            : `repeat(${pageSize}, 1fr) minmax(0px, 20px);`
+                            ? `repeat(${Math.ceil(products.length / 2)}, 1fr)`
+                            : "repeat(3, 1fr)"
                     }
-                    padding={
-                        isMobile ? "16px 32px 0px 32px" : "16px 0px 8px 16px"
-                    }
-                    margin={isMobile ? "auto 0px" : "unset"}
-                    textAlign={isMobile ? "center" : "unset"}
+                    gap="4px"
+                    padding={isMobile ? "0px 16px" : "16px"}
+                    paddingBottom="0px"
+                    alignSelf="start"
                 >
-                    <StyledText
-                        customFontWeight={600}
-                        className={stylingIds.suggestionsHeader}
-                    >
-                        {translation.Popover.suggestions}
-                    </StyledText>
-                    {Suggestions}
+                    {products.map((product, index) => {
+                        //render
+                        if (index < pageSize) {
+                            return (
+                                <ProductItem
+                                    key={product.product.sku}
+                                    product={product}
+                                    updateAndSubmit={updateAndSubmit}
+                                    currencyCode={currencyCode}
+                                    locale={locale}
+                                    currencyRate={currencyRate}
+                                    route={route}
+                                />
+                            );
+                        }
+                    })}
                 </Grid>
-            )}
-
-            <Grid
-                className={stylingIds.products}
-                gridArea="previews"
-                gridTemplateColumns={"1fr 1fr"}
-                gridTemplateRows={
-                    isMobile
-                        ? `repeat(${Math.ceil(products.length / 2)}, 1fr)`
-                        : "repeat(3, 1fr)"
-                }
-                gap="4px"
-                padding={isMobile ? "0px 16px" : "16px"}
-                paddingBottom="0px"
-                alignSelf="start"
-            >
-                {products.map((product, index) => {
-                    //render
-                    if (index < pageSize) {
-                        return (
-                            <ProductItem
-                                key={product.product.sku}
-                                product={product}
-                                updateAndSubmit={updateAndSubmit}
-                                currencyCode={currencyCode}
-                                locale={locale}
-                                currencyRate={currencyRate}
-                                route={route}
-                            />
-                        );
-                    }
-                })}
+    
+                <Grid
+                    className={stylingIds.viewAll}
+                    gridArea="viewall"
+                    alignContent="center"
+                    backgroundColor="#f4f4f4"
+                    textAlign="center"
+                    onClick={() => updateAndSubmit()}
+                    hoverColor="#f0f0f0"
+                    hoverFontWeight={600}
+                    hoverPointer="pointer"
+                >
+                    {translation.Popover.all} ({products.length})
+                </Grid>
             </Grid>
-
-            <Grid
-                className={stylingIds.viewAll}
-                gridArea="viewall"
-                alignContent="center"
-                backgroundColor="#f4f4f4"
-                textAlign="center"
-                onClick={() => updateAndSubmit()}
-                hoverColor="#f0f0f0"
-                hoverFontWeight={600}
-                hoverPointer="pointer"
-            >
-                {translation.Popover.all}
-            </Grid>
-        </Grid>
+        </>
     );
 };
 
@@ -259,6 +262,10 @@ const ProductItem: FC<{
             updateAndSubmit(product.product.name);
         }
     };
+    
+    const format = product.productView?.attributes?.find(
+        (attribute) => attribute.name === "format",
+    );
 
     const productImage = getProductImageURL(product);
     const productUrl = route
@@ -292,11 +299,6 @@ const ProductItem: FC<{
                 boxSizing={isMobile ? "border-box" : "inherit"}
                 onClick={onProductClick}
             >
-                <ProductImage
-                    gridArea="image"
-                    customWidth="100%"
-                    src={productImage || NoImageSvg}
-                />
                 <Grid
                     gridArea="productName"
                     alignSelf={isMobile ? "center" : "end"}
@@ -307,14 +309,7 @@ const ProductItem: FC<{
                     >
                         {htmlStringDecode(product.product.name)}
                     </StyledText>
-                </Grid>
-                <Grid gridArea="price" className={stylingIds.productPrice}>
-                    {getProductPrice(
-                        product,
-                        currencyCode,
-                        currencyRate,
-                        locale,
-                    )}
+                    {format && (<>{' - '}<span className={"format"}>{htmlStringDecode(format.value)}</span></>)}
                 </Grid>
             </Grid>
         </StyledLink>

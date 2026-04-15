@@ -18,5 +18,7 @@ declare global {
     }
 
     const API_URL: string;
+    const TEST_URL: string;
+    const SANDBOX_KEY: string;
     const REACT_APP: boolean;
 }
