@@ -9,7 +9,7 @@ const createStyledComponentsTransformer =
 
 const styledComponentsTransformer = createStyledComponentsTransformer();
 
-const banner = `${pkg.name}@v${pkg.version}`;
+const banner = `Exported from https://github.com/HayHouseInc/storefront-search-as-you-type/. See repo for details.\n\n${pkg.name}@v${pkg.version}`;
 const MAJOR_VERSION = `v${pkg.version.split(".")[0]}`;
 const PORT = 1234;
 

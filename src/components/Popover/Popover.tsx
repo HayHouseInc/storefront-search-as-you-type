@@ -309,7 +309,7 @@ const ProductItem: FC<{
                     >
                         {htmlStringDecode(product.product.name)}
                     </StyledText>
-                    {format && (<>{' - '}<span className={"format"}>{htmlStringDecode(format.value)}</span></>)}
+                    {format && (<><span className={"format"}>{' - '}<span class={"value"}>{htmlStringDecode(format.value)}</span></span></>)}
                 </Grid>
             </Grid>
         </StyledLink>
